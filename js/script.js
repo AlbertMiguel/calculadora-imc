@@ -1,26 +1,36 @@
 import { Modal } from './modal.js'
+import { AlertError } from './alert-error.js'
+import { IMC, notNumber} from './utils.js'
 
-// variables
-const form = document.querySelector('form');
-const inputWeigth = document.querySelector('#weigth');
-const inputHeight = document.querySelector('#height');
+const form = document.querySelector('form')
+const inputWeight = document.querySelector('#weight')
+const inputHeight = document.querySelector('#height')
 
-// Eventos
-form.onsubmit = (event) => {
-    event.preventDefault()
-    
-    weigth = inputWeigth.value;
-    height = inputHeight.value;
-    
-    const result = IMC(weigth, height);
-    const message = `Seu IMC é de ${result}`
+inputHeight.oninput = () => AlertError.close()
+inputWeight.oninput = () => AlertError.close()
 
-    Modal.message.innerText = message;
-    // modalWrapper.classList.add('open')
-    Modal.open();
+form.onsubmit = event => {
+  event.preventDefault()
+
+  let weight = inputWeight.value
+  let height = inputHeight.value
+
+  const alertError = notNumber(weight) || notNumber(height)
+
+  if (alertError) {
+    AlertError.open()
+    return;
+  }
+
+  AlertError.close()
+
+  const result = IMC(weight, height)
+  displayResultMessage(result)
 }
 
-// funções
-function IMC(weight, height) {
-  return (weight / (height / 100) ** 2).toFixed(2)
+function displayResultMessage(result) {
+  const message = `Seu IMC é de ${result}`
+  
+  Modal.message.innerText = message
+  Modal.open()
 }
